@@ -32,7 +32,7 @@ However, the `NormalIdle` hook can make the editor sluggish if the diffing doesn
 This plugin adds a command, `git-async update-diff`, that immediately puts the shell process that does all the work into the background, returning control to Kakoune. This means that although the diffing itself doesn't happen faster, it does not make the whole editor sluggish, only the git gutter.
 
 # installation
-> with any installation method, the `add-highlighter global/git-diff` command needs to come after the `line-numbers` highlighter is added. If the `git-diff` highlighter is added before `line-numbers`, the diff symbols will appear to the right of the line number separator
+with any installation method, the `add-highlighter buffer/git-diff` command needs to run after the `line-numbers` highlighter is added. If the `git-diff` highlighter is added before `line-numbers`, the diff symbols will appear to the right of the line number separator
 
 ## manual
 - put `git-async.kak` in your `autoload` directory
