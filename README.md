@@ -8,22 +8,22 @@ An asynchronous git command for Kakoune. Currently only has the ability to updat
 # explanation
 The way to enable the git gutter in Kakoune is generally something like this in your `kakrc`:
 ```kakscript
-add-highlighter global/git-diff flag-lines Default git_diff_flags
+hook global -group git-gutter-setup BufCreate /.* %{
+    add-highlighter buffer/git-diff flag-lines Default git_diff_flags
+    try %{ git show-diff }
 
-hook global -group git-gutter-hooks BufCreate .* %{
-  try %{ git show-diff }
-}
-hook global -group git-gutter-hooks FocusIn .* %{
-  try %{ git update-diff }
-}
-hook global -group git-gutter-hooks BufReload .* %{
-  try %{ git update-diff }
-}
-hook global -group git-gutter-hooks BufWritePost .* %{
-  try %{ git update-diff }
-}
-hook global -group git-gutter-hooks NormalIdle .* %{
-  try %{ git update-diff }
+    hook buffer -group git-gutter-buffer FocusIn .* %{
+        try %{ git update-diff }
+    }
+    hook buffer -group git-gutter-buffer BufReload .* %{
+        try %{ git update-diff }
+    }
+    hook buffer -group git-gutter-buffer BufWritePost .* %{
+        try %{ git update-diff }
+    }
+    hook buffer -group git-gutter-buffer NormalIdle .* %{
+        try %{ git update-diff }
+    }
 }
 ```
 
@@ -39,22 +39,22 @@ This plugin adds a command, `git-async update-diff`, that immediately puts the s
 
 Put this in `kakrc`:
 ```kakscript
-add-highlighter global/git-diff flag-lines Default git_diff_flags
+hook global -group git-gutter-setup BufCreate /.* %{
+    add-highlighter buffer/git-diff flag-lines Default git_diff_flags
+    try %{ git show-diff }
 
-hook global -group git-gutter-hooks BufCreate .* %{
-  try %{ git show-diff }
-}
-hook global -group git-gutter-hooks FocusIn .* %{
-  try %{ git-async update-diff }
-}
-hook global -group git-gutter-hooks BufReload .* %{
-  try %{ git-async update-diff }
-}
-hook global -group git-gutter-hooks BufWritePost .* %{
-  try %{ git-async update-diff }
-}
-hook global -group git-gutter-hooks NormalIdle .* %{
-  try %{ git-async update-diff }
+    hook buffer -group git-gutter-buffer FocusIn .* %{
+        try %{ git-async update-diff }
+    }
+    hook buffer -group git-gutter-buffer BufReload .* %{
+        try %{ git-async update-diff }
+    }
+    hook buffer -group git-gutter-buffer BufWritePost .* %{
+        try %{ git-async update-diff }
+    }
+    hook buffer -group git-gutter-buffer NormalIdle .* %{
+        try %{ git-async update-diff }
+    }
 }
 ```
 
@@ -63,23 +63,23 @@ To install via [kak-bundle](https://github.com/jdugan6240/kak-bundle):
 - put this in `kakrc`:
 ```kakscript
 bundle git-async.kak 'https://github.com/evannjohnson/git-async.kak' %{
-  add-highlighter global/git-diff flag-lines Default git_diff_flags
+    hook global -group git-gutter-setup BufCreate /.* %{
+        add-highlighter buffer/git-diff flag-lines Default git_diff_flags
+        try %{ git show-diff }
 
-  hook global -group git-gutter-hooks BufCreate .* %{
-    try %{ git show-diff }
-  }
-  hook global -group git-gutter-hooks FocusIn .* %{
-    try %{ git-async update-diff-via-git }
-  }
-  hook global -group git-gutter-hooks BufReload .* %{
-    try %{ git-async update-diff-via-git }
-  }
-  hook global -group git-gutter-hooks BufWritePost .* %{
-    try %{ git-async update-diff-via-git }
-  }
-  hook global -group git-gutter-hooks NormalIdle .* %{
-    try %{ git-async update-diff-via-git }
-  }
+        hook buffer -group git-gutter-buffer FocusIn .* %{
+            try %{ git-async update-diff }
+        }
+        hook buffer -group git-gutter-buffer BufReload .* %{
+            try %{ git-async update-diff }
+        }
+        hook buffer -group git-gutter-buffer BufWritePost .* %{
+            try %{ git-async update-diff }
+        }
+        hook buffer -group git-gutter-buffer NormalIdle .* %{
+            try %{ git-async update-diff }
+        }
+    }
 }
 ```
 
