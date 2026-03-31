@@ -1,3 +1,5 @@
+declare-option -docstring "Always leave space for the git gutter in the line flags columns if the git diff highlighter is active" bool git_gutter_leave_space false
+
 define-command -params 1.. \
     -docstring %{
         git-async [<arguments>]: asynchronous git helper
@@ -127,7 +129,7 @@ define-command -params 1.. \
                 }
             }
 
-            if ($diff_exists) {
+            if ($diff_exists or $ENV{kak_opt_git_gutter_leave_space} eq "true") {
                 $flags .= " \"0| \"";
             }
             print "set-option buffer git_diff_flags $flags\n"
