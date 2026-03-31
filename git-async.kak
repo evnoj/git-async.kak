@@ -78,12 +78,14 @@ define-command -params 1.. \
             $del_char = $ENV{"kak_opt_git_diff_del_char"};
             $top_char = $ENV{"kak_opt_git_diff_top_char"};
             $mod_char = $ENV{"kak_opt_git_diff_mod_char"};
+            $diff_exists = 0;
             foreach $line (<STDIN>) {
                 if ($line =~ /@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))?/) {
                     $from_line = $1;
                     $from_count = ($2 eq "" ? 1 : $2);
                     $to_line = $3;
                     $to_count = ($4 eq "" ? 1 : $4);
+                    $diff_exists = 1;
 
                     if ($from_count == 0 and $to_count > 0) {
                         for $i (0..$to_count - 1) {
@@ -123,6 +125,10 @@ define-command -params 1.. \
                         $flags .= " $last|\{blue+u\}$mod_char";
                     }
                 }
+            }
+
+            if ($diff_exists) {
+                $flags .= " \"0| \"";
             }
             print "set-option buffer git_diff_flags $flags\n"
         ' )
