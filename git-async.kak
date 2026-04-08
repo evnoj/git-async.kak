@@ -65,6 +65,9 @@ define-command -params 1.. \
         eval_in_client 'exec -draft "%%<a-|>tee > '"$fifo_buffer"'<ret>"'
         git show "$rev:${buffile_relative}" > "$fifo_git" &
 
+        ( sleep 5; : >"$fifo_buffer" ) >/dev/null &
+        fifo_unblock=$!
+
         git diff --no-index "$@" -- "$fifo_git" "$fifo_buffer" |
             awk -v buffile_relative="$buffile_relative" '
                 NR == 1 { print "--- a/" buffile_relative }
@@ -72,6 +75,7 @@ define-command -params 1.. \
                 NR > 2
             '
 
+        kill "$fifo_unblock" 2>/dev/null
         rm -f "$fifo_buffer"
         rm -f "$fifo_git"
     }
