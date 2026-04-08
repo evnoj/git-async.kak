@@ -36,6 +36,11 @@ define-command -params 1.. \
 
         eval_in_client 'exec -draft "%%<a-|>tee > '"$fifo"'<ret>"'
         # eval_in_client "eval -no-hooks write \"$fifo\""
+        # if the eval_in_client doesn't run because kak closed,
+        # the fifo isn't written to and the diff will wait forever
+        # implement a 5 second timeout that closes the fifo
+        ( sleep 5; : >"$fifo" ) >/dev/null &
+        fifo_unblock=$!
 
         git show ":${buffile_relative}" |
             diff - "$fifo" "$@" |
@@ -45,6 +50,7 @@ define-command -params 1.. \
                 NR > 2
             '
 
+        kill "$fifo_unblock" 2>/dev/null
         rm -f "$fifo"
     }
 
