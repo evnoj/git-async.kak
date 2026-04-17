@@ -33,13 +33,14 @@ define-command -params 1.. \
 
         fifo=$(mktemp -u /tmp/kak-buffer-fifo-XXXXXX)
         mkfifo "$fifo"
+        trap "rm -f \"$fifo\"" EXIT INT TERM HUP
 
         eval_in_client 'exec -draft "%%<a-|>tee > '"$fifo"'<ret>"'
         # eval_in_client "eval -no-hooks write \"$fifo\""
         # if the eval_in_client doesn't run because kak closed,
         # the fifo isn't written to and the diff will wait forever
         # implement a 5 second timeout that closes the fifo
-        ( sleep 5; : >"$fifo" ) >/dev/null &
+        ( sleep 5; : <>"$fifo"; rm -f "$fifo" ) >/dev/null &
         fifo_unblock=$!
 
         git show ":${buffile_relative}" |
@@ -61,11 +62,12 @@ define-command -params 1.. \
         mkfifo "$fifo_buffer"
         fifo_git=$(mktemp -u /tmp/kak-diff-fifo-XXXXXX)
         mkfifo "$fifo_git"
+        trap "rm -f \"$fifo_buffer\" \"$fifo_git\"" EXIT INT TERM HUP
 
         eval_in_client 'exec -draft "%%<a-|>tee > '"$fifo_buffer"'<ret>"'
         git show "$rev:${buffile_relative}" > "$fifo_git" &
 
-        ( sleep 5; : >"$fifo_buffer" ) >/dev/null &
+        ( sleep 5; : <>"$fifo_buffer" ) >/dev/null &
         fifo_unblock=$!
 
         git diff --no-index "$@" -- "$fifo_git" "$fifo_buffer" |
